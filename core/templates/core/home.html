@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %} {% block title %}Strona główna{% endblock %} 
+{% block content %} 
+{% for post in posts %}
+<div class="card mt-2 border border-3 rounded border-danger">
+  <div class="card-header "><strong>@{{ post.author.username }}</strong></div>
+  <div class="card-body d-flex flex-row justify-content-between">
+    <div class='pe-3'>
+      <a style='text-decoration:none; color:#222222' href='post/{{post.pk}}'>
+        <h5 class="card-title text-break">{{post.tytuł}}</h5>
+      </a>
+      <p class='text-break'>{{post.treść}}</p>
+    </div>
+    <div>
+      {% if user == post.author or perms.main.delete_post %}
+      <form method="post">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn btn-danger"
+          name="post-id"
+          value="{{post.id}}"
+          style='width:7em'
+        >
+          Usuń<br>zadanie
+        </button>
+      </form>
+      <br>
+      {% endif %}
+      {% if user.is_staff %}
+      <form method="post">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="btn btn-warning"
+          name="user-id"
+          value="{{post.author.id}}"
+        >
+          Zablokuj<br>użytkownika
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card-footer text-muted">{{post.created_at}}</div>
+</div>
+{% empty %}
+<div class='display-4 d-flex justify-content-center'>
+  <p> Brak zadań </p>
+</div>
+{% endfor %} {% endblock %}
